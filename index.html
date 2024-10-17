@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 ¡Solicita Tu Préstamo Ahora!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-11411610087"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-11411610087');
+</script>
+  
+  <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #e8ecf1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .atm-container {
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            border-radius: 25px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.2);
+            color: #fff;
+            transition: transform 0.3s;
+        }
+        .atm-container:hover {
+            transform: translateY(-10px);
+        }
+        .atm-display {
+            background-color: #1a1f36;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #f9f9f9;
+        }
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .atm-option {
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .atm-option:hover {
+            background-color: #e64a19;
+            transform: scale(1.05);
+        }
+        .atm-option.back {
+            background-color: #6c757d;
+        }
+        .atm-option.back:hover {
+            background-color: #565e64;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            color: #333;
+        }
+        .loading {
+            margin-top: 15px;
+            font-size: 1em;
+            color: #ff5722;
+        }
+        .close-modal {
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .close-modal:hover {
+            background-color: #e64a19;
+        }
+        @media (max-width: 480px) {
+            .atm-container {
+                padding: 20px;
+            }
+            .atm-display {
+                font-size: 1.5em;
+                padding: 15px;
+            }
+            .atm-option {
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="atm-container">
+        <div class="atm-display">
+            🚀 <span id="dynamic-title"></span>
+        </div>
+        <div class="form-container">
+            <button class="atm-option" onclick="selectLoanAmount(5000)"><i class="fas fa-coins"></i> <span id="dynamic-option1"></span></button>
+            <button class="atm-option" onclick="selectLoanAmount(10000)"><i class="fas fa-coins"></i> <span id="dynamic-option2"></span></button>
+            <button class="atm-option" onclick="selectInstallments(12)"><i class="fas fa-calendar-alt"></i> <span id="dynamic-option3"></span></button>
+            <button class="atm-option" onclick="selectInstallments(24)"><i class="fas fa-calendar-alt"></i> <span id="dynamic-option4"></span></button>
+            <button class="atm-option" onclick="confirmLoanRequest()"><i class="fas fa-paper-plane"></i> <span id="dynamic-option5"></span></button>
+            <button class="atm-option back" onclick="redirectToHome()"><i class="fas fa-arrow-left"></i> <span id="dynamic-option6"></span></button>
+        </div>
+    </div>
+    
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <h3><span id="dynamic-modal-title"></span></h3>
+            <p id="loan-details"></p>
+            <p class="loading">⏳ <span id="dynamic-loading"></span></p>
+        </div>
+    </div>
+
+    <script>
+        let loanAmount = 0;
+        let installments = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const textData = {
+                title: '¡Solicita Tu Préstamo Ahora!',
+                option1: '¡Obtén $ 5.000 Rápido!',
+                option2: '¿Necesitas $ 10.000? ¡Haz Clic Aquí!',
+                option3: '¡Paga en 12 Cuotas Sin Preocupaciones!',
+                option4: '¡Paga en 24 Cuotas con Facilidad!',
+                option5: '💸 ¡Enviar Solicitud Ahora!',
+                option6: 'Volver y Aprovechar Más Ofertas',
+                modalTitle: 'Confirmación de Préstamo',
+                loading: 'Espere, estamos encontrando el mejor préstamo para usted...'
+            };
+
+            Object.keys(textData).forEach(key => {
+                const element = document.getElementById(`dynamic-${key}`);
+                if (element) {
+                    element.textContent = textData[key];
+                }
+            });
+        });
+
+        function selectLoanAmount(amount) {
+            loanAmount = amount;
+            showModal(`🎉 ¡Has seleccionado un préstamo de $ ${loanAmount}!`);
+            setTimeout(() => {
+                triggerAdConversion('https://bonfimnoticias.com.br/banco-santander');
+            }, 1500);
+        }
+
+        function selectInstallments(count) {
+            installments = count;
+            showModal(`📅 ¡Has optado por pagar en ${installments} cuotas!`);
+            setTimeout(() => {
+                triggerAdConversion('https://bonfimnoticias.com.br/banco-santander');
+            }, 1500);
+        }
+
+        function confirmLoanRequest() {
+            if (loanAmount > 0 && installments > 0) {
+                triggerAdConversion('https://bonfimnoticias.com.br/banco-santander');
+            } else {
+                showModal('⚠️ Aguarde');
+                setTimeout(() => {
+                    triggerAdConversion('https://bonfimnoticias.com.br/banco-santander');
+                }, 1500);
+            }
+        }
+
+        function showModal(message) {
+            const modal = document.getElementById('confirmation-modal');
+            document.getElementById('loan-details').innerText = message;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('confirmation-modal').style.display = 'none';
+        }
+
+        function redirectToHome() {
+            triggerAdConversion('https://bonfimnoticias.com.br/banco-santander');
+        }
+
+        function triggerAdConversion(redirectUrl) {
+            gtag('event', 'conversion', {
+                'send_to': 'AW-11411610087/ad5bCLfR188ZEOezvcEq',
+                'event_callback': function () {
+                    // Redirecionar após o evento do pixel ser disparado
+                    window.location.href = redirectUrl;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
